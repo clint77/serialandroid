@@ -1,4 +1,4 @@
-## serailandroid
+## serialandroid
 
 This is a fork of cordovarduino.
 
@@ -18,7 +18,7 @@ And that means that ability to give your Arduino project a mobile app (web-view)
 ### Install it
 From the root folder of your cordova project, run :
 ```
-cordova plugin add cordovarduino
+cordova plugin add serialandroid
 ```
 
 ### How to use it
@@ -29,11 +29,11 @@ The plugin API for this behaves as follows:
 
 Because you're polite, first request the permission to use the serial port to the system:
 ```js
-serial.requestPermission(function success(), function error());
+serialandroid.requestPermission(function success(), function error());
 ```
 You can now open the serial port:
 ```js
-serial.open(opts, function success(), function error());
+serialandroid.open(opts, function success(), function error());
 ```
 `opts` is a JSON object with the following properties:
 
@@ -47,21 +47,21 @@ serial.open(opts, function success(), function error());
 
 You're now able to read and write:
 ```js
-serial.write(data, function success(), function error());
-serial.read(function success(buffer), function error());
+serialandroid.write(data, function success(), function error());
+serialandroid.read(function success(buffer), function error());
 ```
 `data` is the string representation to be written to the serial port.
 `buffer` is a JavaScript ArrayBuffer containing the data that was just read.
 
-Apart from using `serial.write`, you can also use `serial.writeHex` to have an easy way to work with **RS232 protocol** driven hardware from your javascript by using **hex-strings**.
+Apart from using `serialandroid.write`, you can also use `serial.writeHex` to have an easy way to work with **RS232 protocol** driven hardware from your javascript by using **hex-strings**.
 
-In a nutshell, `serial.writeHex('ff')` would write just a single byte where `serial.write('ff')` would let java write 2 bytes to the serial port.
+In a nutshell, `serialandroid.writeHex('ff')` would write just a single byte where `serial.write('ff')` would let java write 2 bytes to the serial port.
 
-Apart from that, `serial.writeHex` works the same way as `serial.write` does.
+Apart from that, `serialandroid.writeHex` works the same way as `serial.write` does.
 
 Register a callback that will be invoked when the driver reads incoming data from your serial device. The success callback function will recieve an ArrayBuffer filled with the data read from serial:
 ```js
-serial.registerReadCallback(
+serialandroid.registerReadCallback(
 	function success(data){
 		var view = new Uint8Array(data);
 		console.log(view);
@@ -75,7 +75,7 @@ serial.registerReadCallback(
 
 And finally close the port:
 ```js
-serial.close(function success(), function error())
+serialandroid.close(function success(), function error())
 ```
 
 ### A Simple Example
@@ -87,9 +87,9 @@ var errorCallback = function(message) {
     alert('Error: ' + message);
 };
 
-serial.requestPermission(
+serialandroid.requestPermission(
 	function(successMessage) {
-    	serial.open(
+    	serialandroid.open(
         	{baudRate: 9600},
             function(successMessage) {
         		serial.write(
@@ -156,17 +156,17 @@ var app = {
             alert('Error: ' + message);
         };
         // request permission first
-        serial.requestPermission(
+        serialandroid.requestPermission(
             // if user grants permission
             function(successMessage) {
                 // open serial port
-                serial.open(
+                serialandroid.open(
                     {baudRate: 9600},
                     // if port is succesfuly opened
                     function(successMessage) {
                         open = true;
                         // register the read callback
-                        serial.registerReadCallback(
+                        serialandroid.registerReadCallback(
                             function success(data){
                                 // decode the received message
                                 var view = new Uint8Array(data);
@@ -260,9 +260,9 @@ Your device might not be listed over at https://github.com/mik3y/usb-serial-for-
 If you know your devices VID (Vendor ID) and PID (Product ID) you could however try 
 
 ```js
-serial.requestPermission({vid: '1d50', pid: '607d'}, function success(), function error()); //hex strings
+serialandroid.requestPermission({vid: '1d50', pid: '607d'}, function success(), function error()); //hex strings
 or
-serial.requestPermission({vid: 7504, pid: 24701}, function success(), function error()); //integers
+serialandroid.requestPermission({vid: 7504, pid: 24701}, function success(), function error()); //integers
 ```
 
 You can also choose the driver to use. Options are:
@@ -276,7 +276,7 @@ You can also choose the driver to use. Options are:
 It defaults to `CdcAcmSerialDriver` if empty or not one of these (please feel free to add a PR to support more).
 
 ```js
-serial.requestPermission({
+serialandroid.requestPermission({
         vid: '1d50',
         pid: '607d',
         driver: 'FtdiSerialDriver' // or any other
