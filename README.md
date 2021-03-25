@@ -1,4 +1,6 @@
-## cordovarduino
+## serailandroid
+
+This is a fork of cordovarduino.
 
 Want a module for your Arduino board that provides:
 
