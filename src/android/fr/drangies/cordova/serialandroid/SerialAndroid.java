@@ -72,7 +72,7 @@ public class SerialAndroid extends CordovaPlugin {
 	// The serial port that will be used in this plugin
 	// private List<UsbSerialPort> mPorts;
 	private UsbSerialPort port;
-	// private UsbSerialPort port2;
+	private UsbSerialPort port2;
 	// Read buffer, and read params
 	private static final int READ_WAIT_MILLIS = 200;
 	private static final int BUFSIZ = 4096;
@@ -417,8 +417,14 @@ public class SerialAndroid extends CordovaPlugin {
 
 				UsbDeviceConnection connection = manager.openDevice(driverTest.getDevice()); // ftDev.setConnection(mUsbConnection)
 				// UsbDeviceConnection connection = manager.openDevice(driver.getDevice());
-				if (connection != null) {
+				Log.i(TAG, "driverTest.getPorts() ::::: " + driverTest.getPorts() + "Length" + driverTest.getPorts().size());
+				if (driverTest.getPorts().size() == 2) {
+					port = driverTest.getPorts().get(1);
+				} else {
 					port = driverTest.getPorts().get(0);
+				}
+
+				if (connection != null) {
 
 					try {
 						// get connection params or the default values
@@ -454,12 +460,14 @@ public class SerialAndroid extends CordovaPlugin {
 				}
 				// onDeviceStateChange(); // NOTE: Replacing this with start io manager code
 				if (productId == 24592) {
-					Log.i(TAG, "Starting io manager. FM1 ");
+					Log.i(TAG, "Starting io manager. FM1 :::: " + port);
+					port2 = port;
+					Log.i(TAG, "port2 " + port2);
 					pSerialIoManager = new SerialInputOutputManager(port, pListener);
 					pExecutor.submit(pSerialIoManager);
 
 				} else {
-					Log.i(TAG, "Starting io manager. Card Reader ");
+					Log.i(TAG, "Starting io manager. Card Reader  :::: " + port);
 					mSerialIoManager = new SerialInputOutputManager(port, mListener);
 					mExecutor.submit(mSerialIoManager);
 				}
@@ -589,15 +597,16 @@ public class SerialAndroid extends CordovaPlugin {
 				if (port == null) {
 					callbackContext.error("Writing a closed port.");
 				} else {
+					Log.i(TAG, "writeSerialHex writing to " + port);
 					try {
 						Log.d(TAG, data);
 						byte[] buffer = hexStringToByteArray(data);
-						int result = port.write(buffer, 1000);
+						port.write(buffer, 1000);
 						// int result = sendDataArray(buffer);
 						// if (result == -1) {
 						// 	throw new IOException("Something happened");
 						// }
-						callbackContext.success(result + " bytes written.");
+						callbackContext.success("Success!");
 					} catch (IOException e) {
 						// deal with error
 						Log.d(TAG, e.getMessage());
