@@ -5,7 +5,7 @@ import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.ArrayList;
+// import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -105,7 +105,7 @@ public class SerialAndroid extends CordovaPlugin {
 	final int MAX_NUM_BYTES = 65536;
 	ReadThread readThread;
 	ReadThreadCard readThreadCard;
-	UsbSerialProber prober1;
+	// UsbSerialProber prober1;
 
 	private final SerialInputOutputManager.Listener mListener = new SerialInputOutputManager.Listener() {
 		@Override
@@ -241,9 +241,9 @@ public class SerialAndroid extends CordovaPlugin {
 					}
 
 					prober = new UsbSerialProber(customTable);
-					if (pid == 24592) {
-						prober1 = new UsbSerialProber(customTable);
-					}
+					// if (pid == 24592) {
+					// 	prober1 = new UsbSerialProber(customTable);
+					// }
 
 				} else {
 					// find all available drivers from attached devices.
@@ -363,8 +363,11 @@ public class SerialAndroid extends CordovaPlugin {
 	private void openSerial(final JSONObject opts, final CallbackContext callbackContext) {
 		cordova.getThreadPool().execute(new Runnable() {
 			public void run() {
+				String deviceName = "";
 				try {
 					productId = opts.has("pid") ? opts.getInt("pid") : 9999;
+					deviceName = opts.has("deviceName") ? opts.getString("deviceName") : "com1";
+					Log.d("deviceName", deviceName);
 				} catch (JSONException e) {
 					// deal with error
 					Log.d(TAG, e.getMessage());
@@ -383,7 +386,7 @@ public class SerialAndroid extends CordovaPlugin {
 				Log.d(TAG, "tempDevCount: " + devCount);
 				
 				UsbSerialDriver driverTest = null;
-				UsbSerialDriver comDriver = null;
+				// UsbSerialDriver comDriver = null;
 				List<UsbSerialDriver> availableDrivers = UsbSerialProber.getDefaultProber().findAllDrivers(manager);
 
 				for (UsbSerialDriver usd : availableDrivers) {
@@ -398,32 +401,28 @@ public class SerialAndroid extends CordovaPlugin {
 						break;
 					}
 				}
-				List<UsbSerialDriver> availableDriversCustom = null;
-				if (productId == 24592) {
-					availableDriversCustom = prober1.findAllDrivers(manager);
-					if (availableDriversCustom != null) {
-						for (UsbSerialDriver usbdriver : availableDriversCustom) {
-							UsbDevice usbdev = usbdriver.getDevice();
+
+				// List<UsbSerialDriver> availableDriversCustom = null;
+				// if (productId == 24592) {
+				// 	availableDriversCustom = prober1.findAllDrivers(manager);
+				// 	if (availableDriversCustom != null) {
+				// 		for (UsbSerialDriver usbdriver : availableDriversCustom) {
+				// 			UsbDevice usbdev = usbdriver.getDevice();
 				
-							if (usbdev.getProductId() == 24592) {
-								comDriver = usbdriver;
-								driverTest = usbdriver;
-								Log.d(TAG, "Com driver " + comDriver);
-								break;
-							}
-						}
-					}
-				}
+				// 			if (usbdev.getProductId() == 24592) {
+				// 				comDriver = usbdriver;
+				// 				// driverTest = usbdriver;
+				// 				Log.d(TAG, "Com driver " + comDriver);
+				// 				break;
+				// 			}
+				// 		}
+				// 	}
+				// }
 
 				UsbDeviceConnection connection = manager.openDevice(driverTest.getDevice()); // ftDev.setConnection(mUsbConnection)
 				// UsbDeviceConnection connection = manager.openDevice(driver.getDevice());
 				Log.i(TAG, "driverTest.getPorts() ::::: " + driverTest.getPorts() + "Length" + driverTest.getPorts().size());
-				if (driverTest.getPorts().size() == 2) {
-					port = driverTest.getPorts().get(1);
-				} else {
-					port = driverTest.getPorts().get(0);
-				}
-
+				
 				if (connection != null) {
 
 					try {
@@ -438,12 +437,26 @@ public class SerialAndroid extends CordovaPlugin {
 						// Sleep On Pause defaults to true
 						sleepOnPause = opts.has("sleepOnPause") ? opts.getBoolean("sleepOnPause") : false;
 
-						port.open(connection);
-						port.setParameters(baudRate, dataBits, stopBits, parity);
-						if (setDTR)
-							port.setDTR(true);
-						if (setRTS)
-							port.setRTS(true);
+						if (deviceName.equals("com2") ) {
+							Log.d("deviceName com2", deviceName);
+							port2 = driverTest.getPorts().get(0);
+							port2.open(connection);
+							port2.setParameters(baudRate, dataBits, stopBits, parity);
+							if (setDTR)
+							port2.setDTR(true);
+							if (setRTS)
+							port2.setRTS(true);
+						} else {
+							Log.d("deviceName not com2", deviceName);
+							port = driverTest.getPorts().get(1);
+							port.open(connection);
+							port.setParameters(baudRate, dataBits, stopBits, parity);
+							if (setDTR)
+								port.setDTR(true);
+							if (setRTS)
+								port.setRTS(true);
+						}
+						
 					} catch (IOException e) {
 						// deal with error
 						Log.d(TAG, e.getMessage());
@@ -459,16 +472,15 @@ public class SerialAndroid extends CordovaPlugin {
 					callbackContext.error("Cannot connect to the device!");
 				}
 				// onDeviceStateChange(); // NOTE: Replacing this with start io manager code
-				if (productId == 24592) {
+				if (deviceName.equals("com1") ) {
 					Log.i(TAG, "Starting io manager. FM1 :::: " + port);
-					port2 = port;
-					Log.i(TAG, "port2 " + port2);
+					// Log.i(TAG, "port2 " + port2);
 					pSerialIoManager = new SerialInputOutputManager(port, pListener);
 					pExecutor.submit(pSerialIoManager);
 
 				} else {
-					Log.i(TAG, "Starting io manager. Card Reader  :::: " + port);
-					mSerialIoManager = new SerialInputOutputManager(port, mListener);
+					Log.i(TAG, "Starting io manager. Card Reader  :::: " + port2);
+					mSerialIoManager = new SerialInputOutputManager(port2, mListener);
 					mExecutor.submit(mSerialIoManager);
 				}
 			}
