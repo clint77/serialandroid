@@ -439,7 +439,7 @@ public class SerialAndroid extends CordovaPlugin {
 
 						if (deviceName.equals("com2") ) {
 							Log.d("deviceName com2", deviceName);
-							port2 = driverTest.getPorts().get(0);
+							port2 = driverTest.getPorts().get(1);
 							port2.open(connection);
 							port2.setParameters(baudRate, dataBits, stopBits, parity);
 							if (setDTR)
@@ -448,7 +448,7 @@ public class SerialAndroid extends CordovaPlugin {
 							port2.setRTS(true);
 						} else {
 							Log.d("deviceName not com2", deviceName);
-							port = driverTest.getPorts().get(1);
+							port = driverTest.getPorts().get(0);
 							port.open(connection);
 							port.setParameters(baudRate, dataBits, stopBits, parity);
 							if (setDTR)
