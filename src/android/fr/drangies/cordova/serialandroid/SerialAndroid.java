@@ -18,7 +18,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.ftdi.j2xx.D2xxManager;
+// import com.ftdi.j2xx.D2xxManager;
 import com.ftdi.j2xx.FT_Device;
 import com.hoho.android.usbserial.driver.CdcAcmSerialDriver;
 import com.hoho.android.usbserial.driver.Ch34xSerialDriver;
@@ -50,9 +50,9 @@ import android.os.Message;
  * @author Xavier Seignard <xavier.seignard@gmail.com>
  */
 public class SerialAndroid extends CordovaPlugin {
-	public Context context;
-	boolean bReadTheadEnable = false;
-	boolean cardReadThreadEnable = false;
+	// public Context context;
+	// boolean bReadTheadEnable = false;
+	// boolean cardReadThreadEnable = false;
 
 	// logging tag
 	private final String TAG = SerialAndroid.class.getSimpleName();
@@ -70,7 +70,6 @@ public class SerialAndroid extends CordovaPlugin {
 	// The current driver that handle the serial port
 	private UsbSerialDriver driver;
 	// The serial port that will be used in this plugin
-	// private List<UsbSerialPort> mPorts;
 	private UsbSerialPort port;
 	private UsbSerialPort port2;
 	// Read buffer, and read params
@@ -97,14 +96,14 @@ public class SerialAndroid extends CordovaPlugin {
 	private final ExecutorService pExecutor = Executors.newSingleThreadExecutor();
 	private SerialInputOutputManager mSerialIoManager;
 	private SerialInputOutputManager pSerialIoManager;
-	private static D2xxManager ftD2xx = null;
+	// private static D2xxManager ftD2xx = null;
 	private static UsbManager mUsbManager;
 	FT_Device ftDev;
 	FT_Device ftDevCard;
 	int iTotalBytes;
 	final int MAX_NUM_BYTES = 65536;
-	ReadThread readThread;
-	ReadThreadCard readThreadCard;
+	// ReadThread readThread;
+	// ReadThreadCard readThreadCard;
 	// UsbSerialProber prober1;
 
 	private final SerialInputOutputManager.Listener mListener = new SerialInputOutputManager.Listener() {
@@ -138,14 +137,6 @@ public class SerialAndroid extends CordovaPlugin {
 		super.initialize(cordova, webView);
 		// your init code here
 		Log.d(TAG, "initialize success!");
-		context = this.cordova.getActivity().getApplicationContext();
-		try { 
-			ftD2xx = D2xxManager.getInstance(context);
-			// Log.d(TAG, "getInstance success! " + ftD2xx);
-		} catch (D2xxManager.D2xxException e) {
-			Log.e(TAG, "getInstance fail!!");
-		}
-
 	}
 
 	/**
@@ -241,9 +232,6 @@ public class SerialAndroid extends CordovaPlugin {
 					}
 
 					prober = new UsbSerialProber(customTable);
-					// if (pid == 24592) {
-					// 	prober1 = new UsbSerialProber(customTable);
-					// }
 
 				} else {
 					// find all available drivers from attached devices.
@@ -285,73 +273,73 @@ public class SerialAndroid extends CordovaPlugin {
 		}
 	};
 
-	public void connectFunction() {
-		if (ftDev != null && true == ftDev.isOpen()) {
-			// Toast.makeText(global_context,"Port("+portIndex+") is already opened.",
-			// Toast.LENGTH_SHORT).show();
-			return;
-		}
+	// public void connectFunction() {
+	// 	if (ftDev != null && true == ftDev.isOpen()) {
+	// 		// Toast.makeText(global_context,"Port("+portIndex+") is already opened.",
+	// 		// Toast.LENGTH_SHORT).show();
+	// 		return;
+	// 	}
 
-		if (true == bReadTheadEnable) {
-			bReadTheadEnable = false;
-			try {
-				Thread.sleep(50);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
+	// 	if (true == bReadTheadEnable) {
+	// 		bReadTheadEnable = false;
+	// 		try {
+	// 			Thread.sleep(50);
+	// 		} catch (InterruptedException e) {
+	// 			e.printStackTrace();
+	// 		}
+	// 	}
 
-		if (null == ftDev) {
-			ftDev = ftD2xx.openByIndex(context, 1);
-		} else {
-			ftDev = ftD2xx.openByIndex(context, 1);
-		}
+	// 	if (null == ftDev) {
+	// 		ftDev = ftD2xx.openByIndex(context, 1);
+	// 	} else {
+	// 		ftDev = ftD2xx.openByIndex(context, 1);
+	// 	}
 
-		if (ftDev == null) {
-			Log.d(TAG, "ftDev null");
-			// midToast("Open port(" + portIndex + ") NG!", Toast.LENGTH_LONG);
-			return;
-		}
+	// 	if (ftDev == null) {
+	// 		Log.d(TAG, "ftDev null");
+	// 		// midToast("Open port(" + portIndex + ") NG!", Toast.LENGTH_LONG);
+	// 		return;
+	// 	}
 
-		if (true == ftDev.isOpen()) {
-			Log.d(TAG, "Openning device port 1 successful!");
+	// 	if (true == ftDev.isOpen()) {
+	// 		Log.d(TAG, "Openning device port 1 successful!");
 			
-			if (false == bReadTheadEnable) {
-				readThread = new ReadThread(handler);
-				readThread.start();
-			}
-		}
-	}
+	// 		if (false == bReadTheadEnable) {
+	// 			readThread = new ReadThread(handler);
+	// 			readThread.start();
+	// 		}
+	// 	}
+	// }
 
-	public void connectFunctionCard() {
-		if (ftDevCard != null && ftDevCard.isOpen()) {
-			return;
-		}
+	// public void connectFunctionCard() {
+	// 	if (ftDevCard != null && ftDevCard.isOpen()) {
+	// 		return;
+	// 	}
 
-		if (true == cardReadThreadEnable) {
-			cardReadThreadEnable = false;
-			try {
-				Thread.sleep(50);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
+	// 	if (true == cardReadThreadEnable) {
+	// 		cardReadThreadEnable = false;
+	// 		try {
+	// 			Thread.sleep(50);
+	// 		} catch (InterruptedException e) {
+	// 			e.printStackTrace();
+	// 		}
+	// 	}
 
-		if (null == ftDevCard) {
-			Log.d(TAG, "ftDevCard not null!");
-			ftDevCard = ftD2xx.openByIndex(context, 2);
-		}
+	// 	if (null == ftDevCard) {
+	// 		Log.d(TAG, "ftDevCard not null!");
+	// 		ftDevCard = ftD2xx.openByIndex(context, 2);
+	// 	}
 
-		if (true == ftDevCard.isOpen()) {
-			Log.d(TAG, "Openning device port 2 successful!");
+	// 	if (true == ftDevCard.isOpen()) {
+	// 		Log.d(TAG, "Openning device port 2 successful!");
 
-			if (true == cardReadThreadEnable) {
-				readThreadCard = new ReadThreadCard(handler);
-				readThreadCard.start();
-			}
-		}
+	// 		if (true == cardReadThreadEnable) {
+	// 			readThreadCard = new ReadThreadCard(handler);
+	// 			readThreadCard.start();
+	// 		}
+	// 	}
 
-	}
+	// }
 
 	/**
 	 * Open the serial port from Cordova
@@ -374,7 +362,6 @@ public class SerialAndroid extends CordovaPlugin {
 					callbackContext.error(e.getMessage());
 				}
 
-				int devCount = ftD2xx.createDeviceInfoList(context);
 				mUsbManager = (UsbManager) cordova.getActivity().getSystemService(Context.USB_SERVICE);	
 				HashMap<String, UsbDevice> deviceList = mUsbManager.getDeviceList();
 				Iterator<UsbDevice> deviceIterator = deviceList.values().iterator();
@@ -382,11 +369,8 @@ public class SerialAndroid extends CordovaPlugin {
 					UsbDevice device = deviceIterator.next();
 					Log.d("Device interfaces", "USB " + device.getInterfaceCount() + " Product ID " + device.getProductId());
 				}
-				// Log.d("USB Device List ", deviceList.toString());
-				Log.d(TAG, "tempDevCount: " + devCount);
 				
 				UsbSerialDriver driverTest = null;
-				// UsbSerialDriver comDriver = null;
 				List<UsbSerialDriver> availableDrivers = UsbSerialProber.getDefaultProber().findAllDrivers(manager);
 
 				for (UsbSerialDriver usd : availableDrivers) {
@@ -921,7 +905,7 @@ public class SerialAndroid extends CordovaPlugin {
 		this.addProperty(obj, key, string);
 	}
 
-	class ReadThreadCard extends Thread {
+	/* class ReadThreadCard extends Thread {
 		final int CARD_DATA_BUFFER = 255;
 
 		Handler cHandler;
@@ -964,53 +948,53 @@ public class SerialAndroid extends CordovaPlugin {
 
 			Log.e(TAG, "read thread terminate...");
 		}
-	}
+	} */
 
 
-	class ReadThread extends Thread {
-		final int USB_DATA_BUFFER = 1023;
+	// class ReadThread extends Thread {
+	// 	final int USB_DATA_BUFFER = 1023;
 
-		Handler mHandler;
+	// 	Handler mHandler;
 
-		ReadThread(Handler h) {
-			mHandler = h;
-			this.setPriority(MAX_PRIORITY);
-		}
+	// 	ReadThread(Handler h) {
+	// 		mHandler = h;
+	// 		this.setPriority(MAX_PRIORITY);
+	// 	}
 
-		public void run() {
-			byte[] usbdata = new byte[USB_DATA_BUFFER];
-			int readcount = 0;
-			// int iWriteIndex = 0;
-			bReadTheadEnable = true;
+	// 	public void run() {
+	// 		byte[] usbdata = new byte[USB_DATA_BUFFER];
+	// 		int readcount = 0;
+	// 		// int iWriteIndex = 0;
+	// 		bReadTheadEnable = true;
 
-			while (true == bReadTheadEnable) {
-				try {
-					Thread.sleep(10);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+	// 		while (true == bReadTheadEnable) {
+	// 			try {
+	// 				Thread.sleep(10);
+	// 			} catch (InterruptedException e) {
+	// 				e.printStackTrace();
+	// 			}
 
-				while (iTotalBytes > (MAX_NUM_BYTES - (USB_DATA_BUFFER + 1))) {
-					try {
-						Thread.sleep(50);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
+	// 			while (iTotalBytes > (MAX_NUM_BYTES - (USB_DATA_BUFFER + 1))) {
+	// 				try {
+	// 					Thread.sleep(50);
+	// 				} catch (InterruptedException e) {
+	// 					e.printStackTrace();
+	// 				}
+	// 			}
 
-				readcount = ftDev.getQueueStatus();
+	// 			readcount = ftDev.getQueueStatus();
 
-				if (readcount > 0) {
-					if (readcount > USB_DATA_BUFFER) {
-						readcount = USB_DATA_BUFFER;
-					}
-					ftDev.read(usbdata, readcount);
-					updateReceivedDataFM1(usbdata);
+	// 			if (readcount > 0) {
+	// 				if (readcount > USB_DATA_BUFFER) {
+	// 					readcount = USB_DATA_BUFFER;
+	// 				}
+	// 				ftDev.read(usbdata, readcount);
+	// 				updateReceivedDataFM1(usbdata);
 				
-				}
-			}
+	// 			}
+	// 		}
 
-			Log.e(TAG, "read thread terminate...");
-		}
-	}
+	// 		Log.e(TAG, "read thread terminate...");
+	// 	}
+	// }
 }
